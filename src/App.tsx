@@ -9,22 +9,57 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { FinanceWorkspace } from './components/FinanceWorkspace';
 import { VendorFieldWorkspace } from './components/VendorFieldWorkspace';
 import { ComplianceWorkspace } from './components/ComplianceWorkspace';
+import { ClientAccessGate } from './components/ClientAccessGate';
+import { AdminAccessGate } from './components/AdminAccessGate';
+import { GeminiAdvisorChatbot } from './components/GeminiAdvisorChatbot';
 
 const MainContent: React.FC = () => {
-  const { currentWorkspace } = useApp();
+  const { currentWorkspace, isAuthenticated, authRole } = useApp();
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
       <div className="flex-1">
         {currentWorkspace === 'PUBLIC' && <PublicWebsite />}
-        {currentWorkspace === 'CLIENT' && <ClientPortal />}
-        {currentWorkspace === 'ADMIN' && <AdminDashboard />}
-        {currentWorkspace === 'FINANCE' && <FinanceWorkspace />}
-        {currentWorkspace === 'VENDOR' && <VendorFieldWorkspace />}
-        {currentWorkspace === 'COMPLIANCE' && <ComplianceWorkspace />}
+        {currentWorkspace === 'CLIENT' && (
+          isAuthenticated && authRole === 'CLIENT' ? (
+            <ClientPortal />
+          ) : (
+            <ClientAccessGate />
+          )
+        )}
+        {currentWorkspace === 'ADMIN' && (
+          isAuthenticated && (authRole === 'MAIN_ADMIN' || authRole === 'OPERATIONS_ADMIN') ? (
+            <AdminDashboard />
+          ) : (
+            <AdminAccessGate />
+          )
+        )}
+        {currentWorkspace === 'FINANCE' && (
+          isAuthenticated && (authRole === 'MAIN_ADMIN' || authRole === 'STAFF') ? (
+            <FinanceWorkspace />
+          ) : (
+            <AdminAccessGate />
+          )
+        )}
+        {currentWorkspace === 'VENDOR' && (
+          isAuthenticated && (authRole === 'MAIN_ADMIN' || authRole === 'STAFF') ? (
+            <VendorFieldWorkspace />
+          ) : (
+            <AdminAccessGate />
+          )
+        )}
+        {currentWorkspace === 'COMPLIANCE' && (
+          isAuthenticated && (authRole === 'MAIN_ADMIN' || authRole === 'STAFF') ? (
+            <ComplianceWorkspace />
+          ) : (
+            <AdminAccessGate />
+          )
+        )}
       </div>
       <Footer />
+      {/* Global Gemini Advisor Chatbot Launcher & Assistant Drawer */}
+      <GeminiAdvisorChatbot />
     </div>
   );
 };

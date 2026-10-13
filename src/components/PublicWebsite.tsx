@@ -24,11 +24,12 @@ import {
   Layers,
   ChevronRight,
   Check,
-  Sparkles
+  Sparkles,
+  Calculator
 } from 'lucide-react';
 
 export const PublicWebsite: React.FC = () => {
-  const { setCurrentWorkspace, projects, milestones, currentUser } = useApp();
+  const { setCurrentWorkspace, projects, milestones, currentUser, openChatbotWithPrompt } = useApp();
   const { format, currency } = useCurrency();
 
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -112,6 +113,14 @@ export const PublicWebsite: React.FC = () => {
                 >
                   <LogIn className="w-4 h-4 text-emerald-400" />
                   <span>Client Sign In</span>
+                </button>
+
+                <button
+                  onClick={() => openChatbotWithPrompt('Please help me draft an investment proposal or project cost estimate')}
+                  className="px-5 py-3.5 text-xs sm:text-sm font-bold text-emerald-300 bg-emerald-950/70 hover:bg-emerald-900/80 border border-emerald-700/60 rounded-xl transition-all shadow-md cursor-pointer flex items-center gap-2"
+                >
+                  <Sparkles className="w-4 h-4 text-emerald-400" />
+                  <span>Draft Proposal with Gemini AI</span>
                 </button>
 
                 <a
@@ -342,6 +351,125 @@ export const PublicWebsite: React.FC = () => {
                   Book Advisory Consultation
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3B. GEMINI AI ADVISORY & ESTIMATION COPILOT */}
+      <section className="py-16 bg-slate-900 border-b border-slate-800 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/80 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-3">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>AI Investment Advisory · Powered by Gemini 3.8</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+                Draft Proposals, Estimate Budgets & Get Market Insights
+              </h2>
+              <p className="text-sm text-slate-400 max-w-2xl mt-2 leading-relaxed">
+                Use our conversational Gemini AI Copilot to draft investment proposals, simulate itemized construction costs, review African market trends, or learn about DiasporaTrust fiduciary safeguards.
+              </p>
+            </div>
+
+            <button
+              onClick={() => openChatbotWithPrompt('Hello! Please help me draft an investment proposal or project cost estimate')}
+              className="px-5 py-3 text-xs sm:text-sm font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 rounded-xl transition-all shadow-md cursor-pointer flex items-center gap-2 shrink-0 self-start lg:self-auto"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Launch Gemini Copilot</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Card 1: Draft Investment Proposal */}
+            <div className="bg-slate-950/60 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-2xl flex flex-col justify-between space-y-4 transition-all group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-bold">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-base text-white group-hover:text-emerald-400 transition-colors">
+                  Draft Investment Proposal
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Generate an institutional proposal specifying project scope, staged escrow tranches, COREN QA milestones, and currency budgets.
+                </p>
+              </div>
+              <button
+                onClick={() => openChatbotWithPrompt('Please draft a formal DiasporaTrust investment proposal for building a residential property in Nigeria')}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer pt-2 border-t border-slate-800"
+              >
+                <span>Draft Proposal with AI</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Card 2: Project Cost Estimator */}
+            <div className="bg-slate-950/60 border border-slate-800 hover:border-teal-500/50 p-6 rounded-2xl flex flex-col justify-between space-y-4 transition-all group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 flex items-center justify-center font-bold">
+                  <Calculator className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-base text-white group-hover:text-teal-400 transition-colors">
+                  Project Cost Estimator
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Calculate itemized costs for residential building (₦/sqm), commercial farmland clearing & drip irrigation, and title searches.
+                </p>
+              </div>
+              <button
+                onClick={() => openChatbotWithPrompt('Please estimate the project cost and timeline for a 350 sqm residential building in Lagos')}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-400 hover:text-teal-300 transition-colors cursor-pointer pt-2 border-t border-slate-800"
+              >
+                <span>Calculate Estimates</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Card 3: African Market Intelligence */}
+            <div className="bg-slate-950/60 border border-slate-800 hover:border-sky-500/50 p-6 rounded-2xl flex flex-col justify-between space-y-4 transition-all group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 flex items-center justify-center font-bold">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-base text-white group-hover:text-sky-400 transition-colors">
+                  African Market Update
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Real-time economic intelligence on Nigerian FX corridors (USD/NGN, GBP/NGN), prime real estate rental yields, and inflation hedging.
+                </p>
+              </div>
+              <button
+                onClick={() => openChatbotWithPrompt('Provide an African and Nigerian economic & real estate update with current FX dynamics and yield trends')}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-400 hover:text-sky-300 transition-colors cursor-pointer pt-2 border-t border-slate-800"
+              >
+                <span>Get Market Update</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Card 4: Fiduciary Service Enquiries */}
+            <div className="bg-slate-950/60 border border-slate-800 hover:border-purple-500/50 p-6 rounded-2xl flex flex-col justify-between space-y-4 transition-all group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center font-bold">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <h3 className="font-bold text-base text-white group-hover:text-purple-400 transition-colors">
+                  Enquire Into Services
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Learn how DiasporaTrust enforces dual-authorization escrow, independent COREN inspections, and Alausa cadastral survey verification.
+                </p>
+              </div>
+              <button
+                onClick={() => openChatbotWithPrompt('Explain DiasporaTrust fiduciary safeguards, dual-authorization escrow, and COREN verification')}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-400 hover:text-purple-300 transition-colors cursor-pointer pt-2 border-t border-slate-800"
+              >
+                <span>Ask About Services</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         </div>

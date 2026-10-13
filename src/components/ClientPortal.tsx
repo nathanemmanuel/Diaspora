@@ -32,12 +32,14 @@ import {
   Receipt,
   HardHat,
   Image as ImageIcon,
-  UserPlus
+  UserPlus,
+  Sparkles
 } from 'lucide-react';
 
 export const ClientPortal: React.FC = () => {
   const {
     currentUser,
+    openChatbotWithPrompt,
     mandates,
     projects,
     milestones,
@@ -201,6 +203,14 @@ export const ClientPortal: React.FC = () => {
                 <span className="text-slate-400 mx-1.5">·</span>
                 <span className="text-slate-500 text-[10px]">CBN Rate</span>
               </div>
+
+              <button
+                onClick={() => openChatbotWithPrompt('Please help me draft an investment proposal for a new mandate in Nigeria')}
+                className="px-3.5 py-2 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                <span>AI Proposal Copilot</span>
+              </button>
 
               <button
                 onClick={() => setFundingModalOpen(true)}
@@ -728,11 +738,21 @@ export const ClientPortal: React.FC = () => {
         {/* ========================================================= */}
         {activeTab === 'MANDATES' && (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">Contractual Client Mandates</h2>
-              <p className="text-xs text-slate-500">
-                Formal legal bilateral service agreements governing scope, project managers, and fee structures.
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">Contractual Client Mandates</h2>
+                <p className="text-xs text-slate-500">
+                  Formal legal bilateral service agreements governing scope, project managers, and fee structures.
+                </p>
+              </div>
+
+              <button
+                onClick={() => openChatbotWithPrompt('Please help me draft a new investment proposal and milestone mandate for my account')}
+                className="px-3.5 py-2 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Draft New Mandate with Gemini AI</span>
+              </button>
             </div>
 
             <div className="grid grid-cols-1 gap-4">

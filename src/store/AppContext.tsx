@@ -43,6 +43,8 @@ export type WorkspaceView =
   | 'VENDOR'
   | 'COMPLIANCE';
 
+export type AuthRole = 'NONE' | 'CLIENT' | 'OPERATIONS_ADMIN' | 'MAIN_ADMIN' | 'STAFF';
+
 interface AppContextType {
   currentWorkspace: WorkspaceView;
   setCurrentWorkspace: (ws: WorkspaceView) => void;
@@ -51,6 +53,19 @@ interface AppContextType {
   switchUserRole: (role: UserRole) => void;
   switchClientAccount: (userId: string) => void;
   allUsers: User[];
+
+  // Access Control & Protected Auth State
+  isAuthenticated: boolean;
+  authRole: AuthRole;
+  loginAsClient: (userId: string) => void;
+  loginAsAdmin: (adminId: string, passkey?: string) => boolean;
+  logout: () => void;
+
+  // Gemini AI Advisory Copilot State
+  chatbotOpen: boolean;
+  setChatbotOpen: (open: boolean) => void;
+  chatbotInitialPrompt: string;
+  openChatbotWithPrompt: (prompt: string) => void;
 
   // Client Confidentiality & Access Gate
   signUpClient: (clientData: {
@@ -115,6 +130,63 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentUser, setCurrentUser] = useState<User>(
     mockUsers.find((u) => u.id === 'usr-client-01') || mockUsers[0]
   );
+  
+  // Access control & Auth Session state
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [authRole, setAuthRole] = useState<AuthRole>('NONE');
+
+  // Gemini AI Chatbot state
+  const [chatbotOpen, setChatbotOpen] = useState<boolean>(false);
+  const [chatbotInitialPrompt, setChatbotInitialPrompt] = useState<string>('');
+
+  const openChatbotWithPrompt = (prompt: string) => {
+    setChatbotInitialPrompt(prompt);
+    setChatbotOpen(true);
+  };
+
+  const loginAsClient = (userId: string) => {
+    const clientUser = allUsers.find((u) => u.id === userId && u.role === 'DIASPORA_CLIENT');
+    if (clientUser) {
+      setCurrentUser(clientUser);
+      setIsAuthenticated(true);
+      setAuthRole('CLIENT');
+      setCurrentWorkspace('CLIENT');
+      addAuditLog(
+        'CLIENT_AUTHENTICATED',
+        'User',
+        clientUser.id,
+        `Authorized client ${clientUser.fullName} (${clientUser.cityOfResidence}) logged into confidential portal.`
+      );
+    }
+  };
+
+  const loginAsAdmin = (adminId: string, _passkey?: string): boolean => {
+    const adminUser = allUsers.find(
+      (u) => u.id === adminId && (u.role === 'MAIN_ADMIN' || u.role === 'ADMIN_OPERATIONS')
+    );
+    if (adminUser) {
+      setCurrentUser(adminUser);
+      setIsAuthenticated(true);
+      setAuthRole(adminUser.role === 'MAIN_ADMIN' ? 'MAIN_ADMIN' : 'OPERATIONS_ADMIN');
+      setCurrentWorkspace('ADMIN');
+      addAuditLog(
+        'ADMIN_AUTHENTICATED',
+        'User',
+        adminUser.id,
+        `Administrator ${adminUser.fullName} (${adminUser.role}) authenticated to Operations Command Desk.`
+      );
+      return true;
+    }
+    return false;
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    setAuthRole('NONE');
+    setCurrentWorkspace('PUBLIC');
+    addAuditLog('USER_LOGGED_OUT', 'User', currentUser.id, `User ${currentUser.fullName} signed out.`);
+  };
+
   const [mandates, setMandates] = useState<ClientMandate[]>(mockMandates);
   const [projects, setProjects] = useState<Project[]>(mockProjects);
   const [milestones, setMilestones] = useState<Milestone[]>(mockMilestones);
@@ -144,21 +216,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const switchClientAccount = (userId: string) => {
-    const clientUser = allUsers.find((u) => u.id === userId && u.role === 'DIASPORA_CLIENT');
-    if (clientUser) {
-      setCurrentUser(clientUser);
-      setCurrentWorkspace('CLIENT');
-      addAuditLog(
-        'CLIENT_SESSION_SWITCHED',
-        'User',
-        clientUser.id,
-        `Client session active for ${clientUser.fullName} (${clientUser.cityOfResidence}, ${clientUser.countryOfResidence}). Confidential workspace engaged.`
-      );
-    }
+    loginAsClient(userId);
   };
 
   const loginClient = (userId: string) => {
-    switchClientAccount(userId);
+    loginAsClient(userId);
   };
 
   const signUpClient = (clientData: {
@@ -224,6 +286,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setAllUsers((prev) => [newUser, ...prev]);
     setMandates((prev) => [newMandate, ...prev]);
     setCurrentUser(newUser);
+    setIsAuthenticated(true);
+    setAuthRole('CLIENT');
     setCurrentWorkspace('CLIENT');
 
     addAuditLog(
@@ -849,6 +913,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         switchUserRole,
         switchClientAccount,
         allUsers,
+        isAuthenticated,
+        authRole,
+        loginAsClient,
+        loginAsAdmin,
+        logout,
+        chatbotOpen,
+        setChatbotOpen,
+        chatbotInitialPrompt,
+        openChatbotWithPrompt,
         signUpClient,
         loginClient,
         addOperationsAdmin,
