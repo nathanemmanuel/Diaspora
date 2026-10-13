@@ -1,0 +1,6 @@
+{
+  "name": "DiasporaTrust — Managed Diaspora Investments & Operations",
+  "description": "Institutional multi-currency platform for Nigerians abroad managing real estate, construction, agricultural projects, and professional advisory with verifiable milestone tracking, dual-auth finance controls, and transparent reporting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
